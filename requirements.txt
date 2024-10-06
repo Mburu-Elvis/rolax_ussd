@@ -1,0 +1,4 @@
+africastalking
+intasend-python
+Flask
+psycopg2

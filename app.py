@@ -8,7 +8,7 @@ from messaging import SMS
 app = Flask(__name__)
 
 pwd = parse.quote("")
-conn = psycopg2.connect(f"postgresql://rolax:{pwd}@localhost:5432/")
+conn = psycopg2.connect(f"")
 cur = conn.cursor()
 
 @app.route("/ussd", methods = ['POST'])
@@ -22,7 +22,7 @@ def ussd():
 
     if text == '':
         # This is the first request. Note how we start the response with CON
-        response  = "CON Welcome to NAWASCO.\n"
+        response  = "CON Welcome to Rolax.\n"
         response += "1. Meter Reading \n"
         response += "2. Pay Water Bill\n"
         response += "3. Report Issue\n"
@@ -43,18 +43,13 @@ def ussd():
         response = "CON Which issue are you reporting:\n"
         response += "1. Water outage\n"
         response += "2. Pipe leakage\n"
-    elif text == '1*1':
-        # This is a second level response where the user selected 1 in the first instance
-        accountNumber  = "ACC1001"
-        # This is a terminal request. Note how we start the response with END
-        response = "END Your account number is " + accountNumber
     elif text == '3*1':
         sms = SMS()
         sms.sending(number=phone_number, location="Juja", meter_id="541", message_type=1)
         response = "END Issue reported."
     elif text == '3*2':
         sms = SMS()
-        sms.sending(number=phone_number, location="Juja", meter_id="541", message_type=1)
+        sms.sending(number=phone_number, location="Juja", meter_id="541", message_type=2)
         response = "END Issue reported."
     else :
         response = "END Invalid choice"
@@ -67,7 +62,6 @@ def incoming_messages():
     data = request.get_json(force=True)
     print(f'Incoming message...\n ${data}')
     return Response(status=200)
-
 
 def meter_reading(phone_number):
     query = """
